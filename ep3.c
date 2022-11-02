@@ -2,17 +2,41 @@
 #include <stdlib.h>
 
 #define MAX_TEXTO 20000
+#define MAX_PALAVRA 50
+
+
+typedef struct celula {
+    int frequencia;
+    char palavra[MAX_PALAVRA];
+    struct celula *no_esquerdo;
+    struct celula *no_direito;
+} no;
+
 char TEXTO[MAX_TEXTO];
+int TAM_TEXTO;
+
+no raiz;
 
 void LerTexto(char nome_arquivo[]);
+void MontarArvore();
 int caractere_valido(char c);
 
-int main(){
+int resolver(){
     char nome_arquivo[] = "";
+
+    /* obtenção do texto */
     printf("Digite o nome do arquivo com terminacao .txt\n");
     scanf("%s", nome_arquivo);
     LerTexto(nome_arquivo);
-    printf("%s", TEXTO);
+    printf("%s\n", TEXTO);
+
+    /* obtenção das palavras do texto */
+    MontarArvore();
+    return 0;
+}
+
+int main(){
+    resolver();
     return 0;
 }
 
@@ -47,8 +71,36 @@ void LerTexto(char nome_arquivo[]){
                 break;
             }
         }
+        TAM_TEXTO = i;
+
         /* fechamento do arquivo */
         fclose(arquivo);
+    }
+}
+
+/* insere as palavras na árvore de busca binária */
+void MontarArvore(){
+    int i = 0; /* índice no texto*/
+    int j = 0; /* índice na palavra*/
+    int qtd = 0; /* quantidade de palavras */
+    char palavra_atual[MAX_PALAVRA] = "";
+
+    while(i < TAM_TEXTO){
+        /* registrar na palavra enquanto não encontrar espaços ou quebras de linha */
+        if(TEXTO[i] != ' ' && TEXTO[i] != '\n'){
+            palavra_atual[j] = TEXTO[i];
+            j++;
+        } else {
+            /* insere na árvore binária */
+            printf("%s\n", palavra_atual);
+
+            /* deleção da palavra */
+            for(j = 0; j < MAX_PALAVRA; j++)
+                palavra_atual[j] = 0;
+            j = 0;
+            qtd++;
+        }
+        i++;
     }
 }
 
