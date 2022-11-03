@@ -1,21 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "arvore.c"
 
 #define MAX_TEXTO 20000
 #define MAX_PALAVRA 50
 
-
-typedef struct celula {
-    int frequencia;
-    char palavra[MAX_PALAVRA];
-    struct celula *no_esquerdo;
-    struct celula *no_direito;
-} no;
-
 char TEXTO[MAX_TEXTO];
 int TAM_TEXTO;
-
-no raiz;
 
 void LerTexto(char nome_arquivo[]);
 void MontarArvore();
@@ -36,7 +27,33 @@ int resolver(){
 }
 
 int main(){
-    resolver();
+    /* resolver(); */
+    no a, b, c, d, e;
+    a.frequencia = 3;
+    b.frequencia = 7;
+    c.frequencia = 1;
+    d.frequencia = 5;
+    e.frequencia = 4;
+
+    a.no_esquerdo = &c;
+    a.no_direito = &b;
+
+    b.no_esquerdo = &d;
+    b.no_direito = NULL;
+
+    c.no_esquerdo = NULL;
+    c.no_direito = NULL;
+
+    d.no_esquerdo = NULL;
+    d.no_direito = NULL;
+
+    e.no_esquerdo = NULL;
+    e.no_direito = NULL;
+
+    print_arv(&a, 'p');
+    inserir_no(&a, 10);
+    inserir_no(&a, 4);
+    print_arv(&a, 'p');
     return 0;
 }
 
