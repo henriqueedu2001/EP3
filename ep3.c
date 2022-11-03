@@ -11,6 +11,7 @@ int TAM_TEXTO;
 void LerTexto(char nome_arquivo[]);
 void MontarArvore();
 int caractere_valido(char c);
+int ordem(char a[], char b[]);
 
 int resolver(){
     char nome_arquivo[] = "";
@@ -28,32 +29,8 @@ int resolver(){
 
 int main(){
     /* resolver(); */
-    no a, b, c, d, e;
-    a.frequencia = 3;
-    b.frequencia = 7;
-    c.frequencia = 1;
-    d.frequencia = 5;
-    e.frequencia = 4;
-
-    a.no_esquerdo = &c;
-    a.no_direito = &b;
-
-    b.no_esquerdo = &d;
-    b.no_direito = NULL;
-
-    c.no_esquerdo = NULL;
-    c.no_direito = NULL;
-
-    d.no_esquerdo = NULL;
-    d.no_direito = NULL;
-
-    e.no_esquerdo = NULL;
-    e.no_direito = NULL;
-
-    print_arv(&a, 'p');
-    inserir_no(&a, 10);
-    inserir_no(&a, 4);
-    print_arv(&a, 'p');
+    int x = ordem("casa", "aexe");
+    printf("%d\n", x);
     return 0;
 }
 
@@ -131,4 +108,44 @@ int caractere_valido(char c){
         return 1;
     }
     return 0;
+}
+
+/* verifica se duas palavras a e b estão em ordem alfabética */
+int ordem(char a[], char b[]){
+    int tamanho_a = 0;
+    int tamanho_b = 0;
+    int menor_tamanho = 0;
+    int i = 0;
+
+    /* obtenção tamanho de a */
+    i = 0;
+    while(a[i] != '\0')
+        i++;
+    tamanho_a = i;
+
+    /* obtenção tamanho de b */
+    i = 0;
+    while(b[i] != '\0')
+        i++;
+    tamanho_b = i;
+
+    /* menor tamanho de palavra */
+    if(tamanho_a < tamanho_b)
+        menor_tamanho = tamanho_a;
+    else
+        menor_tamanho = tamanho_b;
+
+    /* verificação da ordem alfabética para cada caractere */
+    for(i = 0; i < menor_tamanho; i++){
+        if(a[i] > b[i])
+            return 0;
+        else if(a[i] < b[i])
+            return 1;
+    }
+
+    /* casos em que somente a terminação é distinta */
+    if(tamanho_a > tamanho_b)
+        return 0;
+
+    return 1;
 }

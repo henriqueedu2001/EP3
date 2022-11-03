@@ -3,6 +3,7 @@
 
 typedef struct celula {
     int frequencia;
+    char *palavra;
     struct celula *no_esquerdo;
     struct celula *no_direito;
 } no;
