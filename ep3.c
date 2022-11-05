@@ -28,9 +28,25 @@ int resolver(){
 }
 
 int main(){
-    /* resolver(); */
-    int x = ordem("casa", "aexe");
-    printf("%d\n", x);
+    /*resolver();*/
+    no a;
+    a.frequencia = 1;
+    a.no_esquerdo = NULL;
+    a.no_direito = NULL;
+    a.palavra = "gato";
+
+    inserir_no(&a, "abacate");
+    inserir_no(&a, "gato");
+    inserir_no(&a, "pexe");
+    inserir_no(&a, "elefante");
+    inserir_no(&a, "zebra");
+    inserir_no(&a, "ganso");
+    inserir_no(&a, "lula");
+    inserir_no(&a, "onca");
+    inserir_no(&a, "cobra");
+    inserir_no(&a, "pexe");
+
+    print_arv(&a, 'p');
     return 0;
 }
 
@@ -108,44 +124,4 @@ int caractere_valido(char c){
         return 1;
     }
     return 0;
-}
-
-/* verifica se duas palavras a e b estão em ordem alfabética */
-int ordem(char a[], char b[]){
-    int tamanho_a = 0;
-    int tamanho_b = 0;
-    int menor_tamanho = 0;
-    int i = 0;
-
-    /* obtenção tamanho de a */
-    i = 0;
-    while(a[i] != '\0')
-        i++;
-    tamanho_a = i;
-
-    /* obtenção tamanho de b */
-    i = 0;
-    while(b[i] != '\0')
-        i++;
-    tamanho_b = i;
-
-    /* menor tamanho de palavra */
-    if(tamanho_a < tamanho_b)
-        menor_tamanho = tamanho_a;
-    else
-        menor_tamanho = tamanho_b;
-
-    /* verificação da ordem alfabética para cada caractere */
-    for(i = 0; i < menor_tamanho; i++){
-        if(a[i] > b[i])
-            return 0;
-        else if(a[i] < b[i])
-            return 1;
-    }
-
-    /* casos em que somente a terminação é distinta */
-    if(tamanho_a > tamanho_b)
-        return 0;
-
-    return 1;
 }
