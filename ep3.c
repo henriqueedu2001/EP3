@@ -1,12 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "arvore.c"
+#include <string.h>
 
 #define MAX_TEXTO 20000
 #define MAX_PALAVRA 50
 
 char TEXTO[MAX_TEXTO];
 int TAM_TEXTO;
+
+typedef struct celula {
+    int frequencia;
+    char *palavra;
+    struct celula *no_esquerdo;
+    struct celula *no_direito;
+} no;
 
 typedef struct lista_ligada {
     no *no_arv;
@@ -23,107 +30,99 @@ void MontarArvore(no *raiz);
 int caractere_valido(char c);
 int ordem(char a[], char b[]);
 
+void print_arv(no *raiz);
+no * inserir_no(no *raiz, char *palavra);
+
 int resolver(){
     char nome_arquivo[] = "";
-    no raiz;
-
-    raiz.frequencia = 0;
-    raiz.no_esquerdo = NULL;
-    raiz.no_direito = NULL;
-    raiz.palavra = "";
-
-    inserir_no(&raiz, "um");
-    inserir_no(&raiz, "gato");
-    inserir_no(&raiz, "comeu");
-    inserir_no(&raiz, "o");
-    inserir_no(&raiz, "passarinho");
-    inserir_no(&raiz, "que");
-    inserir_no(&raiz, "costumava");
-    inserir_no(&raiz, "ficar");
-    inserir_no(&raiz, "em");
-    inserir_no(&raiz, "cima");
-    inserir_no(&raiz, "da");
-    inserir_no(&raiz, "cerca");
-    inserir_no(&raiz, "mas");
-    inserir_no(&raiz, "uma");
-    inserir_no(&raiz, "vez");
-    inserir_no(&raiz, "sinha");
-    inserir_no(&raiz, "vitoria");
-    inserir_no(&raiz, "pegou");
-    inserir_no(&raiz, "o");
-    inserir_no(&raiz, "gato");
-    inserir_no(&raiz, "no");
-    inserir_no(&raiz, "flagra");
-    inserir_no(&raiz, "comendo");
-    inserir_no(&raiz, "o");
-    inserir_no(&raiz, "passarinho");
-
-    print_arv(&raiz, 'p');
-    busca_freq(&raiz, 2);
 
     /* obtenção do texto */
     printf("Digite o nome do arquivo com terminacao .txt\n");
     scanf("%s", nome_arquivo);
     LerTexto(nome_arquivo);
 
-    /* obtenção das palavras do texto */
-    MontarArvore(&raiz);
-    print_arv(&raiz, 'p');
     return 0;
-}
-
-void print_lista_ligada(lista_ligada *l){
-    if(l == NULL){
-        return;
-    } else {
-        printf("%s\n", l->no_arv->palavra);
-        print_lista_ligada(l->proximo);
-    }
 }
 
 int main(){
-    /*resolver();*/
-    char nome_arquivo[] = "";
-    no raiz;
 
-    raiz.frequencia = 0;
-    raiz.no_esquerdo = NULL;
-    raiz.no_direito = NULL;
-    raiz.palavra = "";
+    resolver();
 
-    inserir_no(&raiz, "um");
-    inserir_no(&raiz, "gato");
-    inserir_no(&raiz, "comeu");
-    inserir_no(&raiz, "o");
-    inserir_no(&raiz, "passarinho");
-    inserir_no(&raiz, "que");
-    inserir_no(&raiz, "costumava");
-    inserir_no(&raiz, "ficar");
-    inserir_no(&raiz, "em");
-    inserir_no(&raiz, "cima");
-    inserir_no(&raiz, "da");
-    inserir_no(&raiz, "cerca");
-    inserir_no(&raiz, "mas");
-    inserir_no(&raiz, "uma");
-    inserir_no(&raiz, "vez");
-    inserir_no(&raiz, "sinha");
-    inserir_no(&raiz, "vitoria");
-    inserir_no(&raiz, "pegou");
-    inserir_no(&raiz, "o");
-    inserir_no(&raiz, "gato");
-    inserir_no(&raiz, "no");
-    inserir_no(&raiz, "flagra");
-    inserir_no(&raiz, "comendo");
-    inserir_no(&raiz, "o");
-    inserir_no(&raiz, "passarinho");
-
-    print_arv(&raiz, 'p');
-
-    printf("%s\n", raiz.palavra);
-    printf("%s\n", (raiz.no_esquerdo)->palavra);
-    printf("%s\n", (raiz.no_direito)->palavra);
-    
+    no a;
+    a.frequencia = 1;
+    a.palavra = "";
+    a.no_esquerdo = NULL;
+    a.no_direito = NULL;
+    MontarArvore(&a);
+    print_arv(&a);
     return 0;
+}
+
+no * inserir_no(no *raiz, char *palavra){
+    if(raiz == NULL){
+        no * aux = malloc(sizeof(no));
+        printf("raiz nula\n");
+        aux->frequencia = 1;
+        aux->no_esquerdo = NULL;
+        aux->no_direito = NULL;
+        aux->palavra = palavra;
+        return aux;
+    } else if(raiz->palavra == palavra) {
+        raiz->frequencia += 1;
+    } else if(!ordem(raiz->palavra, palavra)){
+        raiz->no_esquerdo = inserir_no(raiz->no_esquerdo, palavra);
+    } else {
+        raiz->no_direito = inserir_no(raiz->no_direito, palavra);
+    }
+    return raiz;
+}
+
+/* verifica se duas palavras a e b estão em ordem alfabética */
+int ordem(char a[], char b[]){
+    int tamanho_a = 0;
+    int tamanho_b = 0;
+    int menor_tamanho = 0;
+    int i = 0;
+
+    /* obtenção tamanho de a */
+    i = 0;
+    while(a[i] != '\0')
+        i++;
+    tamanho_a = i;
+
+    /* obtenção tamanho de b */
+    i = 0;
+    while(b[i] != '\0')
+        i++;
+    tamanho_b = i;
+
+    /* menor tamanho de palavra */
+    if(tamanho_a < tamanho_b)
+        menor_tamanho = tamanho_a;
+    else
+        menor_tamanho = tamanho_b;
+
+    /* verificação da ordem alfabética para cada caractere */
+    for(i = 0; i < menor_tamanho; i++){
+        if(a[i] > b[i])
+            return 0;
+        else if(a[i] < b[i])
+            return 1;
+    }
+
+    /* casos em que somente a terminação é distinta */
+    if(tamanho_a > tamanho_b)
+        return 0;
+
+    return 1;
+}
+
+void print_arv(no *raiz){
+    if(raiz != NULL){
+        printf("%s(%d)\n", raiz ->palavra , raiz->frequencia);
+        print_arv(raiz->no_esquerdo);
+        print_arv(raiz->no_direito);
+    }
 }
 
 /* faz a leitura do arquivo de nome indicado pelo parâmetro e o registra na string do texto */
@@ -166,36 +165,14 @@ void LerTexto(char nome_arquivo[]){
 
 /* insere as palavras na árvore de busca binária */
 void MontarArvore(no *raiz){
-    int i = 0; /* índice no texto*/
-    int j = 0; /* índice na palavra*/
-    int qtd = 0; /* quantidade de palavras */
+    char * palavra_atual;
+    palavra_atual = strtok(TEXTO, " ");
 
-    no aux;
-
-    aux.frequencia = 0;
-    aux.no_esquerdo = NULL;
-    aux.no_direito = NULL;
-    aux.palavra = "";
-    char palavra_atual[MAX_PALAVRA] = "";
-
-    while(i < TAM_TEXTO){
-        /* registrar na palavra enquanto não encontrar espaços ou quebras de linha */
-        if(TEXTO[i] != ' ' && TEXTO[i] != '\n'){
-            palavra_atual[j] = TEXTO[i];
-            j++;
-        } else {
-            /* insere na árvore binária */
-            printf("%s\n", palavra_atual);
-
-            /* deleção da palavra */
-            for(j = 0; j < MAX_PALAVRA; j++)
-                palavra_atual[j] = '\0';
-            j = 0;
-            qtd++;
-        }
-        i++;
+    while(palavra_atual != NULL ) {
+        printf("%s\n", palavra_atual);
+        inserir_no(raiz, palavra_atual);
+        palavra_atual = strtok(NULL, " ");
     }
-    print_arv(&aux, 'p');
 }
 
 /* verifica se o caractere é ASCII simples */
