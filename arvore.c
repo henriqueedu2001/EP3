@@ -13,6 +13,16 @@ int altura_arv(no *raiz);
 int qtd_nos_arv(no *raiz);
 no* inserir_no(no * raiz, char x[]);
 int ordem(char a[], char b[]);
+void busca_freq(no * raiz, int frequencia);
+
+void busca_freq(no * raiz, int frequencia){
+    if(raiz == NULL)
+        return;
+    else if(raiz -> frequencia == frequencia)
+        printf("%s\n", raiz -> palavra);
+    busca_freq(raiz -> no_esquerdo, frequencia);
+    busca_freq(raiz -> no_direito, frequencia);
+}
 
 void print_arv(no *raiz, char style){
     if(raiz != NULL){
