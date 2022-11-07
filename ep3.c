@@ -58,18 +58,58 @@ int main(){
     return 0;
 }
 
+int iguais(char a[], char b[]){
+    int i = 0;
+    int tam_a, tam_b, tam_min;
+    tam_a = tam_b = tam_min = 0;
+
+    printf("COMPARANDO: %s e %s\n", a, b);
+
+    i = 0;
+    while (a[i] != '\0'){
+        tam_a++;
+        i++;
+    }
+
+    i = 0;
+    while (b[i] != '\0'){
+        tam_b++;
+        i++;
+    }
+
+    if(tam_a != tam_b)
+        return 0;
+    
+    i = 0;
+    while(i < tam_a){
+        if(a[i] != b[i]){
+            return 0;
+        }
+        i++;
+    }
+    
+    
+    
+    return 1;
+}
+
 no * inserir_no(no *raiz, char *palavra){
     if(raiz == NULL){
         no * aux = malloc(sizeof(no));
-        printf("raiz nula\n");
         aux->frequencia = 1;
         aux->no_esquerdo = NULL;
         aux->no_direito = NULL;
         aux->palavra = palavra;
         return aux;
-    } else if(raiz->palavra == palavra) {
-        raiz->frequencia += 1;
-    } else if(!ordem(raiz->palavra, palavra)){
+    } 
+    printf("-%s%s- %d\n", raiz->palavra, palavra, iguais(raiz->palavra, palavra));
+    if(iguais(raiz->palavra, palavra)) {
+        printf("iguais\n");
+
+        raiz->frequencia = raiz->frequencia + 1;
+        return raiz;
+    }
+    if(!ordem(raiz->palavra, palavra)){
         raiz->no_esquerdo = inserir_no(raiz->no_esquerdo, palavra);
     } else {
         raiz->no_direito = inserir_no(raiz->no_direito, palavra);
@@ -169,7 +209,6 @@ void MontarArvore(no *raiz){
     palavra_atual = strtok(TEXTO, " ");
 
     while(palavra_atual != NULL ) {
-        printf("%s\n", palavra_atual);
         inserir_no(raiz, palavra_atual);
         palavra_atual = strtok(NULL, " ");
     }
