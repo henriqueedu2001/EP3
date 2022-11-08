@@ -17,7 +17,7 @@ typedef struct celula {
 
 typedef struct lista_ligada {
     no *no_arv;
-    int x;
+    char *x;
     struct lista_ligada *proximo;
 } lista_ligada;
 
@@ -45,7 +45,7 @@ char normalizado(char ch);
 
 /* Listas Ligadas */
 
-void inserir_lista(lista_ligada *l, int elemento){
+void inserir_lista(lista_ligada *l, char * elemento){
     lista_ligada *aux = malloc(sizeof(lista_ligada));
     aux->x = elemento;
 
@@ -62,7 +62,7 @@ void inserir_lista(lista_ligada *l, int elemento){
         return;
     } else {
         /* próximo no existe */
-        if(l->proximo->x > elemento){
+        if(ordem(elemento, l->proximo->x)){
             /* no deve ser inserido entre o atual e o próximo*/
             aux->proximo = l->proximo;
             l->proximo = aux;
@@ -76,13 +76,28 @@ void inserir_lista(lista_ligada *l, int elemento){
 
 void print_lista(lista_ligada *l){
     if(l != NULL){
-        printf("%d -> ", l->x);
+        printf("%s -> ", l->x);
         print_lista(l->proximo);
     }
 }
 
+void l(){
+    lista_ligada l;
+    l.x = 0;
+    l.proximo = NULL;
+    inserir_lista(&l, "gato");
+    print_lista(&l);
+    printf("\n");
+    inserir_lista(&l, "abacate");
+    print_lista(&l);
+    printf("\n");
+    inserir_lista(&l, "beterraba");
+    print_lista(&l);
+    printf("\n");
+}
+
 int main(){
-    resolver();
+    l();
     return 0;
 }
 
