@@ -7,6 +7,7 @@
 
 char TEXTO[MAX_TEXTO];
 int TAM_TEXTO;
+int QTD_PALAVRAS;
 
 typedef struct celula {
     int frequencia;
@@ -44,6 +45,24 @@ int caractere_valido(char c);
 char normalizado(char ch);
 
 /* Listas Ligadas */
+
+int conta_nos_lista(lista_ligada *l){
+    if(l != NULL)
+        return 1 + conta_nos_lista(l->proximo);
+    return 0;
+}
+
+int conta_nos_arvore(no *raiz){
+    int qtd_esq;
+    int qtd_dir;
+    if(raiz == NULL)
+        return 0;
+    else{
+        qtd_esq = conta_nos_arvore(raiz->no_esquerdo);
+        qtd_dir = conta_nos_arvore(raiz->no_direito);
+    }
+    return 1 + qtd_esq + qtd_dir;
+}
 
 void inserir_lista(lista_ligada *l, no *raiz){
     char * elemento = raiz->palavra;
@@ -98,13 +117,29 @@ void MontarLista(no *raiz, vetor_lista_ligada *vl){
         MontarLista(raiz->no_direito, vl);
     }
 }
-    
+
+int altura_arv(no *raiz){
+    if(raiz == NULL){
+        return 0;
+    } else {
+        int altura_esquerda = altura_arv(raiz->no_esquerdo);
+        int altura_direita = altura_arv(raiz->no_direito);
+        if(altura_esquerda > altura_direita){
+            return 1 + altura_esquerda;
+        } else {
+            return 1 + altura_direita;
+        }
+    }
+    return 0;
+}
 
 void resolver(){
     char nome_arquivo[] = "";
     int k;
     int i = 0;
-    int tamanho_lista_ligada = 10;
+    int tamanho_lista_ligada;
+    int *vetor_zipfy;
+    char acao;
     no a;
     vetor_lista_ligada vl;
 
@@ -122,8 +157,10 @@ void resolver(){
     /* inserção das palavras na árvore de busca binária */
     MontarArvore(&a);
 
-    /* inicialização da lista ligada */ 
-    vl.lista = malloc(10*sizeof(lista_ligada));
+    /* inicialização da lista ligada */
+    tamanho_lista_ligada = QTD_PALAVRAS;
+    vetor_zipfy = malloc((tamanho_lista_ligada + 6)*sizeof(int));
+    vl.lista = malloc((tamanho_lista_ligada + 6)*sizeof(lista_ligada));
 
     for(i = 0; i < 10; i++){
         vl.lista[i].proximo = NULL;
@@ -136,9 +173,30 @@ void resolver(){
     /* recebe o inteiro k do usuário */
     printf("Digite um inteiro k > 0 para ver a lista de palavras de frequencia f_i = k\n");
     scanf(" %d", &k);
-    printf("Imprimindo palavras de frequencia f_i = k\n");
+    printf("Imprimindo palavras de frequencia f_i = %d\n", k);
     print_lista(&vl.lista[k]);
+
+    /* exibição de estatísticas */
     printf("Pronto!\nDeseja ver estatisticas?\n[a] Sim\n[b] Nao\n");
+    scanf(" %c", &acao);
+
+    if(acao == 'a'){
+        /* mostra quantidade de nós utilizados */
+        printf("quantidade de nos da arvore: %d\n", conta_nos_arvore(&a));
+        printf("altura da arvore: %d\n", altura_arv(&a));
+        printf("quantidade de nos na lista ligada: %d\n", conta_nos_lista(&vl.lista[k]));
+        
+        /* monta o vetor de zipfy */
+        printf("Exibindo distribuicao das palavras em ordem crescente de frequencia (vetor zipfy)\n", QTD_PALAVRAS);
+        for(i = 1; i < tamanho_lista_ligada; i++){
+            vetor_zipfy[i] = conta_nos_lista(&vl.lista[i]) - 1;
+            printf("%d ", vetor_zipfy[i]);
+        }
+        
+    } else {
+        printf("bobao cara de pudim vou invadir o capitolio! xD\n");
+    }
+    
 }
 
 /* faz a leitura do arquivo de nome indicado pelo parâmetro e o registra na string do texto */
@@ -188,9 +246,11 @@ void MontarArvore(no *raiz){
     char * palavra_atual;
     palavra_atual = strtok(TEXTO, " ");
 
+    QTD_PALAVRAS = 0;
     while(palavra_atual != NULL ) {
         inserir_no(raiz, palavra_atual);
         palavra_atual = strtok(NULL, " ");
+        QTD_PALAVRAS++;
     }
 }
 
