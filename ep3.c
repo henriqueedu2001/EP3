@@ -45,9 +45,11 @@ char normalizado(char ch);
 
 /* Listas Ligadas */
 
-void inserir_lista(lista_ligada *l, char * elemento){
+void inserir_lista(lista_ligada *l, no *raiz){
+    char * elemento = raiz->palavra;
     lista_ligada *aux = malloc(sizeof(lista_ligada));
     aux->x = elemento;
+    aux->no_arv = raiz;
 
     if(l == NULL){
         /* nó atual é nulo */
@@ -69,45 +71,19 @@ void inserir_lista(lista_ligada *l, char * elemento){
             return;
         } else {
             /* continuar procurando */
-            inserir_lista(l->proximo, elemento);
+            inserir_lista(l->proximo, raiz);
         }
     }
 }
 
 void print_lista(lista_ligada *l){
+    char *palavra_nula = "";
     if(l != NULL){
-        printf("%s\n", l->x);
+        if(l->x != 0 && l->x != palavra_nula){
+            printf("%s\n", l->x);
+        }
         print_lista(l->proximo);
     }
-}
-
-void l(){
-    vetor_lista_ligada vl;
-    lista_ligada l;
-    int i = 0;
-    int tamanho_lista_ligada = 10;
-
-    vl.lista = malloc(10*sizeof(lista_ligada));
-
-    for(i = 0; i < 10; i++){
-        vl.lista[i].proximo = NULL;
-        vl.lista[i].x = 0;
-    }
-
-    inserir_lista(&vl.lista[0], "gato");
-    inserir_lista(&vl.lista[0], "zebra");
-    inserir_lista(&vl.lista[0], "abacate");
-    inserir_lista(&vl.lista[0], "cenoura");
-    print_lista(&vl.lista[0]);
-    printf("\n");
-
-    inserir_lista(&vl.lista[1], "vagina");
-    inserir_lista(&vl.lista[1], "xereca");
-    inserir_lista(&vl.lista[1], "buceta");
-    inserir_lista(&vl.lista[1], "pepeca");
-    print_lista(&vl.lista[1]);
-    printf("\n");
-
 }
 
 int main(){
@@ -117,8 +93,7 @@ int main(){
 
 void MontarLista(no *raiz, vetor_lista_ligada *vl){
     if(raiz != NULL){
-        printf("Inserindo %s (%d) na lista ligada\n", raiz->palavra, raiz->frequencia);
-        inserir_lista(&vl->lista[raiz->frequencia], raiz->palavra);
+        inserir_lista(&vl->lista[raiz->frequencia], raiz);
         MontarLista(raiz->no_esquerdo, vl);
         MontarLista(raiz->no_direito, vl);
     }
@@ -146,7 +121,6 @@ void resolver(){
 
     /* inserção das palavras na árvore de busca binária */
     MontarArvore(&a);
-    print_arv(&a);
 
     /* inicialização da lista ligada */ 
     vl.lista = malloc(10*sizeof(lista_ligada));
@@ -160,13 +134,17 @@ void resolver(){
     MontarLista(&a, &vl);
 
     /* recebe o inteiro k do usuário */
+    printf("Digite um inteiro k > 0 para ver a lista de palavras de frequencia f_i = k\n");
     scanf(" %d", &k);
+    printf("Imprimindo palavras de frequencia f_i = k\n");
     print_lista(&vl.lista[k]);
+    printf("Pronto!\nDeseja ver estatisticas?\n[a] Sim\n[b] Nao\n");
 }
 
 /* faz a leitura do arquivo de nome indicado pelo parâmetro e o registra na string do texto */
 void LerTexto(char nome_arquivo[]){
     FILE *arquivo = NULL;
+    int overflow = 0;
 
     /* tentativa de abrir o arquivo .txt */
     arquivo = fopen(nome_arquivo, "r");
@@ -191,15 +169,18 @@ void LerTexto(char nome_arquivo[]){
             
             /* caso de overflow */
             if(i > MAX_TEXTO){
+                overflow = 1;
                 printf("tamanho do arquivo excede a capacidade do programa.\n");
                 break;
             }
         }
         TAM_TEXTO = i;
-
+        if(!overflow)
+            printf("Texto lido com sucesso\n");
         /* fechamento do arquivo */
         fclose(arquivo);
     }
+    
 }
 
 /* insere as palavras na árvore de busca binária */
