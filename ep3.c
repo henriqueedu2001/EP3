@@ -45,6 +45,42 @@ char normalizado(char ch);
 
 /* Listas Ligadas */
 
+void inserir_lista(lista_ligada *l, int elemento){
+    lista_ligada *aux = malloc(sizeof(lista_ligada));
+    aux->x = elemento;
+
+    if(l == NULL){
+        /* nó atual é nulo */
+        aux->proximo = NULL;
+        l = aux;
+        return;
+    }
+    if(l->proximo == NULL){
+        /* próximo no é nulo — inserir no fim da lista*/
+        aux->proximo = NULL;
+        l->proximo = aux;
+        return;
+    } else {
+        /* próximo no existe */
+        if(l->proximo->x > elemento){
+            /* no deve ser inserido entre o atual e o próximo*/
+            aux->proximo = l->proximo;
+            l->proximo = aux;
+            return;
+        } else {
+            /* continuar procurando */
+            inserir_lista(l->proximo, elemento);
+        }
+    }
+}
+
+void print_lista(lista_ligada *l){
+    if(l != NULL){
+        printf("%d -> ", l->x);
+        print_lista(l->proximo);
+    }
+}
+
 int main(){
     resolver();
     return 0;
