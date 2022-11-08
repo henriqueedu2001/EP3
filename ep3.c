@@ -76,34 +76,62 @@ void inserir_lista(lista_ligada *l, char * elemento){
 
 void print_lista(lista_ligada *l){
     if(l != NULL){
-        printf("%s -> ", l->x);
+        printf("%s\n", l->x);
         print_lista(l->proximo);
     }
 }
 
 void l(){
+    vetor_lista_ligada vl;
     lista_ligada l;
-    l.x = 0;
-    l.proximo = NULL;
-    inserir_lista(&l, "gato");
-    print_lista(&l);
+    int i = 0;
+    int tamanho_lista_ligada = 10;
+
+    vl.lista = malloc(10*sizeof(lista_ligada));
+
+    for(i = 0; i < 10; i++){
+        vl.lista[i].proximo = NULL;
+        vl.lista[i].x = 0;
+    }
+
+    inserir_lista(&vl.lista[0], "gato");
+    inserir_lista(&vl.lista[0], "zebra");
+    inserir_lista(&vl.lista[0], "abacate");
+    inserir_lista(&vl.lista[0], "cenoura");
+    print_lista(&vl.lista[0]);
     printf("\n");
-    inserir_lista(&l, "abacate");
-    print_lista(&l);
+
+    inserir_lista(&vl.lista[1], "vagina");
+    inserir_lista(&vl.lista[1], "xereca");
+    inserir_lista(&vl.lista[1], "buceta");
+    inserir_lista(&vl.lista[1], "pepeca");
+    print_lista(&vl.lista[1]);
     printf("\n");
-    inserir_lista(&l, "beterraba");
-    print_lista(&l);
-    printf("\n");
+
 }
 
 int main(){
-    l();
+    resolver();
     return 0;
 }
 
+void MontarLista(no *raiz, vetor_lista_ligada *vl){
+    if(raiz != NULL){
+        printf("Inserindo %s (%d) na lista ligada\n", raiz->palavra, raiz->frequencia);
+        inserir_lista(&vl->lista[raiz->frequencia], raiz->palavra);
+        MontarLista(raiz->no_esquerdo, vl);
+        MontarLista(raiz->no_direito, vl);
+    }
+}
+    
+
 void resolver(){
     char nome_arquivo[] = "";
+    int k;
+    int i = 0;
+    int tamanho_lista_ligada = 10;
     no a;
+    vetor_lista_ligada vl;
 
     /* obtenção do texto */
     printf("Digite o nome do arquivo com terminacao .txt\n");
@@ -120,7 +148,20 @@ void resolver(){
     MontarArvore(&a);
     print_arv(&a);
 
+    /* inicialização da lista ligada */ 
+    vl.lista = malloc(10*sizeof(lista_ligada));
+
+    for(i = 0; i < 10; i++){
+        vl.lista[i].proximo = NULL;
+        vl.lista[i].x = 0;
+    }
+
     /* montagem da lista ligada */
+    MontarLista(&a, &vl);
+
+    /* recebe o inteiro k do usuário */
+    scanf(" %d", &k);
+    print_lista(&vl.lista[k]);
 }
 
 /* faz a leitura do arquivo de nome indicado pelo parâmetro e o registra na string do texto */
