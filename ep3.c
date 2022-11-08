@@ -45,7 +45,6 @@ int resolver(){
 }
 
 int main(){
-
     resolver();
 
     no a;
@@ -62,8 +61,6 @@ int iguais(char a[], char b[]){
     int i = 0;
     int tam_a, tam_b, tam_min;
     tam_a = tam_b = tam_min = 0;
-
-    printf("COMPARANDO: %s e %s\n", a, b);
 
     i = 0;
     while (a[i] != '\0'){
@@ -88,8 +85,6 @@ int iguais(char a[], char b[]){
         i++;
     }
     
-    
-    
     return 1;
 }
 
@@ -102,10 +97,7 @@ no * inserir_no(no *raiz, char *palavra){
         aux->palavra = palavra;
         return aux;
     } 
-    printf("-%s%s- %d\n", raiz->palavra, palavra, iguais(raiz->palavra, palavra));
     if(iguais(raiz->palavra, palavra)) {
-        printf("iguais\n");
-
         raiz->frequencia = raiz->frequencia + 1;
         return raiz;
     }
