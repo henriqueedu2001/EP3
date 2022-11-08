@@ -36,6 +36,16 @@ void LerTexto(char nome_arquivo[]);
 void MontarArvore(no *raiz);
 no * inserir_no(no *raiz, char *palavra);
 void print_arv(no *raiz);
+int altura_arv(no *raiz);
+int conta_nos_arvore(no *raiz);
+
+/* LISTAS LIGADAS */
+
+int conta_nos_lista(lista_ligada *l);
+void inserir_lista(lista_ligada *l, no *raiz);
+void print_lista(lista_ligada *l);
+void MontarLista(no *raiz, vetor_lista_ligada *vl);
+void Print();
 
 /* FUNÇÕES DE PALAVRAS */
 
@@ -44,92 +54,8 @@ int iguais(char a[], char b[]);
 int caractere_valido(char c);
 char normalizado(char ch);
 
-/* Listas Ligadas */
-
-int conta_nos_lista(lista_ligada *l){
-    if(l != NULL)
-        return 1 + conta_nos_lista(l->proximo);
-    return 0;
-}
-
-int conta_nos_arvore(no *raiz){
-    int qtd_esq;
-    int qtd_dir;
-    if(raiz == NULL)
-        return 0;
-    else{
-        qtd_esq = conta_nos_arvore(raiz->no_esquerdo);
-        qtd_dir = conta_nos_arvore(raiz->no_direito);
-    }
-    return 1 + qtd_esq + qtd_dir;
-}
-
-void inserir_lista(lista_ligada *l, no *raiz){
-    char * elemento = raiz->palavra;
-    lista_ligada *aux = malloc(sizeof(lista_ligada));
-    aux->x = elemento;
-    aux->no_arv = raiz;
-
-    if(l == NULL){
-        /* nó atual é nulo */
-        aux->proximo = NULL;
-        l = aux;
-        return;
-    }
-    if(l->proximo == NULL){
-        /* próximo no é nulo — inserir no fim da lista*/
-        aux->proximo = NULL;
-        l->proximo = aux;
-        return;
-    } else {
-        /* próximo no existe */
-        if(ordem(elemento, l->proximo->x)){
-            /* no deve ser inserido entre o atual e o próximo*/
-            aux->proximo = l->proximo;
-            l->proximo = aux;
-            return;
-        } else {
-            /* continuar procurando */
-            inserir_lista(l->proximo, raiz);
-        }
-    }
-}
-
-void print_lista(lista_ligada *l){
-    char *palavra_nula = "";
-    if(l != NULL){
-        if(l->x != 0 && l->x != palavra_nula){
-            printf("%s\n", l->x);
-        }
-        print_lista(l->proximo);
-    }
-}
-
 int main(){
     resolver();
-    return 0;
-}
-
-void MontarLista(no *raiz, vetor_lista_ligada *vl){
-    if(raiz != NULL){
-        inserir_lista(&vl->lista[raiz->frequencia], raiz);
-        MontarLista(raiz->no_esquerdo, vl);
-        MontarLista(raiz->no_direito, vl);
-    }
-}
-
-int altura_arv(no *raiz){
-    if(raiz == NULL){
-        return 0;
-    } else {
-        int altura_esquerda = altura_arv(raiz->no_esquerdo);
-        int altura_direita = altura_arv(raiz->no_direito);
-        if(altura_esquerda > altura_direita){
-            return 1 + altura_esquerda;
-        } else {
-            return 1 + altura_direita;
-        }
-    }
     return 0;
 }
 
@@ -162,7 +88,8 @@ void resolver(){
     vetor_zipfy = malloc((tamanho_lista_ligada + 6)*sizeof(int));
     vl.lista = malloc((tamanho_lista_ligada + 6)*sizeof(lista_ligada));
 
-    for(i = 0; i < 10; i++){
+    /* inicializa o vetor de listas ligadas */
+    for(i = 0; i < tamanho_lista_ligada; i++){
         vl.lista[i].proximo = NULL;
         vl.lista[i].x = 0;
     }
@@ -192,9 +119,8 @@ void resolver(){
             vetor_zipfy[i] = conta_nos_lista(&vl.lista[i]) - 1;
             printf("%d ", vetor_zipfy[i]);
         }
-        
     } else {
-        printf("bobao cara de pudim vou invadir o capitolio! xD\n");
+        Print();
     }
     
 }
@@ -240,6 +166,8 @@ void LerTexto(char nome_arquivo[]){
     }
     
 }
+
+/* ----------------FUNÇÕES DE ÁRVORES---------------- */
 
 /* insere as palavras na árvore de busca binária */
 void MontarArvore(no *raiz){
@@ -291,6 +219,98 @@ void print_arv(no *raiz){
         print_arv(raiz->no_direito);
     }
 }
+
+/* devolve a altura de uma árvore */
+int altura_arv(no *raiz){
+    if(raiz == NULL){
+        return 0;
+    } else {
+        int altura_esquerda = altura_arv(raiz->no_esquerdo);
+        int altura_direita = altura_arv(raiz->no_direito);
+        if(altura_esquerda > altura_direita){
+            return 1 + altura_esquerda;
+        } else {
+            return 1 + altura_direita;
+        }
+    }
+    return 0;
+}
+
+/* conta a quantidade de nós presentes na árvore de busca binária*/
+int conta_nos_arvore(no *raiz){
+    int qtd_esq;
+    int qtd_dir;
+    if(raiz == NULL)
+        return 0;
+    else{
+        qtd_esq = conta_nos_arvore(raiz->no_esquerdo);
+        qtd_dir = conta_nos_arvore(raiz->no_direito);
+    }
+    return 1 + qtd_esq + qtd_dir;
+}
+
+/* ----------------FUNÇÕES DE CARACTERES---------------- */
+
+/* conta a quantidade de nós presentes na lista ligada */
+int conta_nos_lista(lista_ligada *l){
+    if(l != NULL)
+        return 1 + conta_nos_lista(l->proximo);
+    return 0;
+}
+
+/* insere um nó da árvore binária na lista ligada */
+void inserir_lista(lista_ligada *l, no *raiz){
+    char * elemento = raiz->palavra;
+    lista_ligada *aux = malloc(sizeof(lista_ligada));
+    aux->x = elemento;
+    aux->no_arv = raiz;
+
+    if(l == NULL){
+        /* nó atual é nulo */
+        aux->proximo = NULL;
+        l = aux;
+        return;
+    }
+    if(l->proximo == NULL){
+        /* próximo no é nulo — inserir no fim da lista*/
+        aux->proximo = NULL;
+        l->proximo = aux;
+        return;
+    } else {
+        /* próximo no existe */
+        if(ordem(elemento, l->proximo->x)){
+            /* no deve ser inserido entre o atual e o próximo*/
+            aux->proximo = l->proximo;
+            l->proximo = aux;
+            return;
+        } else {
+            /* continuar procurando */
+            inserir_lista(l->proximo, raiz);
+        }
+    }
+}
+
+/* printa as palavras de uma lista ligada */
+void print_lista(lista_ligada *l){
+    char *palavra_nula = "";
+    if(l != NULL){
+        if(l->x != 0 && l->x != palavra_nula){
+            printf("%s\n", l->x);
+        }
+        print_lista(l->proximo);
+    }
+}
+
+/* insere os nós da árvore de busca binária no vetor de listas */
+void MontarLista(no *raiz, vetor_lista_ligada *vl){
+    if(raiz != NULL){
+        inserir_lista(&vl->lista[raiz->frequencia], raiz);
+        MontarLista(raiz->no_esquerdo, vl);
+        MontarLista(raiz->no_direito, vl);
+    }
+}
+
+/* ----------------FUNÇÕES DE LISTAS---------------- */
 
 /* verifica se duas palavras a e b estão em ordem alfabética */
 int ordem(char a[], char b[]){
@@ -391,4 +411,12 @@ char normalizado(char ch){
         break;
     }
     return ch;
+}
+
+/* faz a exibição das estatísticas */
+void Print(){
+    /* parabéns, você achou um easter egg! xD*/
+    printf("bobao cara de pudim vou invadir o capitolio! xD\n");
+    /* jamais traduza a palavra abaixo para binário */
+    /* 01101000 01110100 01110100 01110000 01110011 00111010 00101111 00101111 01110111 01110111 01110111 00101110 01111001 01101111 01110101 01110100 01110101 01100010 01100101 00101110 01100011 01101111 01101101 00101111 01110111 01100001 01110100 01100011 01101000 00111111 01110110 00111101 01100100 01010001 01110111 00110100 01110111 00111001 01010111 01100111 01011000 01100011 01010001  */
 }
